@@ -1,0 +1,38 @@
+name: E2E Tests - Selenium
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build project
+        run: npm run build --if-present
+        continue-on-error: true
+      
+      - name: Run E2E Tests
+        run: npm test -- --test lib/api/web-element/waitUntil.js --test test/apidemos/elements/elementGlobalTest.js --test test/apidemos/elements/testGlobalLocateStrategy.js --test test/apidemos/web-elements/elementApiWithPageObjects.js --test test/sampletests/withwebdriver/sampleTestUsingSeleniumWebdriver.js --test test/src/api/commands/element/testClearValue.js --test test/src/api/commands/element/testSetPassword.js --test test/src/api/commands/element/testSetPasswordReport.js --test test/src/api/commands/web-element/testClear.js --test test/src/api/commands/web-element/testClick.js --test test/src/api/commands/web-element/testClickAndHold.js --test test/src/api/commands/web-element/testDoubleClick.js --test test/src/api/commands/web-element/testDragAndDrop.js --test test/src/api/commands/web-element/testElement.js --test test/src/api/commands/web-element/testFind.js --test test/src/api/commands/web-element/testFindAll.js --test test/src/api/commands/web-element/testFindAllByAltText.js --test test/src/api/commands/web-element/testFindAllByPlaceholderText.js --test test/src/api/commands/web-element/testFindAllByRole.js --test test/src/api/commands/web-element/testFindAllByText.js --test test/src/api/commands/web-element/testFindByAltText.js --test test/src/api/commands/web-element/testFindByLabelText.js --test test/src/api/commands/web-element/testFindByPlaceholderText.js --test test/src/api/commands/web-element/testFindByRole.js --test test/src/api/commands/web-element/testFindByText.js --test test/src/api/commands/web-element/testGetAccessibleName.js --test test/src/api/commands/web-element/testGetAriaRole.js --test test/src/api/commands/web-element/testGetAttribute.js --test test/src/api/commands/web-element/testGetCssProperty.js --test test/src/api/commands/web-element/testGetFirstElementChild.js --test test/src/api/commands/web-element/testGetId.js --test test/src/api/commands/web-element/testGetLastElementChild.js --test test/src/api/commands/web-element/testGetNextElementSibling.js --test test/src/api/commands/web-element/testGetPreviousElementSibling.js --test test/src/api/commands/web-element/testGetProperty.js --test test/src/api/commands/web-element/testGetRect.js --test test/src/api/commands/web-element/testGetShadowRoot.js --test test/src/api/commands/web-element/testGetTagName.js --test test/src/api/commands/web-element/testGetText.js --test test/src/api/commands/web-element/testGetValue.js --test test/src/api/commands/web-element/testIsEnabled.js --test test/src/api/commands/web-element/testIsSelected.js --test test/src/api/commands/web-element/testIsVisible.js --test test/src/api/commands/web-element/testMoveTo.js --test test/src/api/commands/web-element/testRightClick.js --test test/src/api/commands/web-element/testSendKeys.js --test test/src/api/commands/web-element/testSetAttribute.js --test test/src/api/commands/web-element/testSetProperty.js --test test/src/api/commands/web-element/testSetValue.js --test test/src/api/commands/web-element/testShadowFind.js --test test/src/api/commands/web-element/testShadowFindAll.js --test test/src/api/commands/web-element/testSubmit.js --test test/src/api/commands/web-element/testTakeScreenshot.js --test test/src/api/commands/web-element/testUpdate.js --test test/src/api/commands/web-element/testUpload.js --test test/src/api/protocol/testElementCommands.js --test test/src/service-builders/testAppiumServer.js --test test/src/service-builders/testChromeDriver.js --test test/src/service-builders/testEdgeDriver.js --test test/src/service-builders/testFirefoxDriver.js --test test/src/service-builders/testSeleniumServer.js
